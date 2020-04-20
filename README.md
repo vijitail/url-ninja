@@ -45,7 +45,7 @@ You can also parse paramters as array.
 For example, `cars%5B%5D=Volvo&cars%5B%5D=Saab&cars%5B%5D=Mercedes` this query string can be parsed to an array.
 
 ```js
-const cars = _url.get("cars"); // [Volvo. Saab, Mercedes]
+const cars = _url.get("cars"); // [Volvo, Saab, Mercedes]
 ```
 
 `cars=Volvo,Saab,Mercedes` will also parse in to an array.
@@ -84,7 +84,13 @@ _url.set(params, 1);
 
 ### `_url.has()`
 
-Todo
+The `_url.has()` method will return boolean, based on if the paramter exists in the URL. If an array is paased to this method, it will return an object.
+
+```js
+const hasLocation = _url.has("location"); // true or false
+
+const checkParams = _url.has(["name", "location"]); // { name: false, location: true }
+```
 
 ### `_url.remove()`
 

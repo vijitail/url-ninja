@@ -126,7 +126,17 @@ window._url = (function(window) {
   }
 
   function hasParams(params) {
-    // @ Todo
+    if (typeof params === "string") return !!getParams(params);
+
+    if (Object.prototype.toString.call(params) === "[object Array]") {
+      const map = {};
+      for (let i = 0; i < params.length; i++) {
+        map[params[i]] = !!getParams(params[i]);
+      }
+      return map;
+    }
+
+    return false;
   }
 
   function removeParams() {
@@ -139,6 +149,7 @@ window._url = (function(window) {
 
   return {
     get: getParams,
-    set: setParams
+    set: setParams,
+    has: hasParams
   };
 })(window);
