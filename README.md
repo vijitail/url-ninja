@@ -1,4 +1,4 @@
-<img alt="logo" src="https://imgur.com/xpGV16b.png" style="width: 200px; height: auto" />
+![logo](https://imgur.com/xpGV16b.png)
 
 # URL Ninja
 
