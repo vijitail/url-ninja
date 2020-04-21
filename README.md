@@ -1,4 +1,4 @@
-![logo](https://imgur.com/xpGV16b.png)
+![logo](https://imgur.com/UVHxfAhl.png)
 
 # URL Ninja
 
