@@ -7,7 +7,7 @@ A minimal cross browser URL query string parser library.
 Add the `url-ninja.js` file inside your project and include it using a `<script>` tag
 
 ```html
-<script src="url-ninja.js"></script>
+<script src="url-ninja.min.js"></script>
 ```
 
 ## Usage
