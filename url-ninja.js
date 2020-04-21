@@ -139,17 +139,68 @@ window._url = (function(window) {
     return false;
   }
 
-  function removeParams() {
-    // @ Todo
+  function removeParams(params, value = false, isHash = false) {
+    if (typeof value === "boolean") isHash = value;
+
+    let l = window.location.search;
+    let h = window.location.hash;
+    let partials = l.slice(1).split("&");
+
+    const hashIndex = h.indexOf("?");
+    if (isHash && hashIndex > -1) {
+      partials = h.slice(hashIndex + 1).split("&");
+    }
+    function deleteParam(key, value) {
+      for (let i = 0; i < partials.length; i++) {
+        const p = partials[i].split("=");
+        const _pA = checkIfKeyIsArray(decodeURI(p[0]));
+        _key = _pA ? key + "[]" : key;
+        if (decodeURI(p[0]) === _key) {
+          if (_pA) {
+            if (value === decodeURI(p[1])) {
+              partials.splice(i, 1);
+              break;
+            } else if (value !== decodeURI(p[1]) && typeof value !== "boolean")
+              continue;
+            partials[i] = "";
+            continue;
+          } else {
+            partials.splice(i, 1);
+            break;
+          }
+        }
+      }
+    }
+
+    if (typeof params === "string") deleteParam(params, value);
+
+    if (Object.prototype.toString.call(params) === "[object Array]") {
+      for (let i = 0; i < params.length; i++) {
+        deleteParam(params[i], value);
+      }
+    }
+
+    const partialsString = partials.join("&");
+    if (isHash) {
+      const _r = partialsString > window.location.hash;
+      window.location.hash = "?" + partialsString;
+      return _r;
+    }
+    window.location.search = partialsString;
+
+    return true;
   }
 
-  function clearParams() {
-    // @ Todo
+  function clearParams(isHash = false) {
+    if (isHash) window.location.hash = "";
+    else window.location.search = "";
   }
 
   return {
     get: getParams,
     set: setParams,
-    has: hasParams
+    has: hasParams,
+    remove: removeParams,
+    clear: clearParams
   };
 })(window);
