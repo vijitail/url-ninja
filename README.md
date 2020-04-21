@@ -129,3 +129,7 @@ _url.clear(); // will remove from location.search
 
 _url.clear(true); // will remove from location.hash
 ```
+
+## Motivation
+
+I work on E-commerce applications regularly. Often it includes fixing filters or adding new filters in the shop page. So, instead of reimplementing the core features, again and again, I decided to create this helper library to assist me in getting a headstart.
