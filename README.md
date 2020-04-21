@@ -1,4 +1,5 @@
-<img alt="logo" src="https://imgur.com/xpGV16b.png" style="width: 300px; height: auto" />
+<img alt="logo" src="https://imgur.com/xpGV16b.png" style="width: 200px; height: auto" />
+
 # URL Ninja
 
 A minimal cross browser URL query string parser library.
