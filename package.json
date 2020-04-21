@@ -1,6 +1,6 @@
 {
   "name": "url-ninja",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "description": "A minimal cross browser URL parser",
   "main": "url-ninja.js",
   "scripts": {
