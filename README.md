@@ -1,4 +1,4 @@
-![logo](https://imgur.com/xpGV16bl.png)
+![logo](https://imgur.com/xpGV16b.png)
 # URL Ninja
 
 A minimal cross browser URL query string parser library.
