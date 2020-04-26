@@ -14,7 +14,7 @@ Add the `url-ninja.js` file inside your project and include it using a `<script>
 
 ### `_url.get()`
 
-To get URL all query parameters use the `_url.get()` method. This will return an object of query parameters key-value pairs including hash parameters.
+To get all query parameters use the `_url.get()` method. This will return an object of query parameters key-value pairs.
 
 ```js
 const queryParams = _url.get();
@@ -50,6 +50,10 @@ const cars = _url.get("cars"); // [Volvo, Saab, Mercedes]
 
 `cars=Volvo,Saab,Mercedes` will also parse in to an array.
 
+Use the `getHash()` method, if you want to get paramaters from location hash.
+
+<b>Note</b> that location hash string must have a "?" before the start of parameters, just like in regular query strings.
+
 ### `_url.set()`
 
 You can set new query parameters by using the `set()` method.
@@ -58,10 +62,10 @@ You can set new query parameters by using the `set()` method.
 _url.set("language", "PHP");
 ```
 
-To set a hash query parameter, pass a true value in the third parameter.
+To set a hash query parameter, use the `setHash()` method.
 
 ```js
-_url.set("language", "PHP", true);
+_url.setHash("language", "PHP");
 ```
 
 You can also set multiple parameters
@@ -77,7 +81,7 @@ const params = {
   language: "PHP",
   frameworks: ["Laravel", "Symfony", "Codeigniter"]
 };
-_url.set(params, true);
+_url.setHash(params);
 ```
 
 **Note** that, `set` will reload the page if the hash boolean is not passed. So if you are building an ajax based filters, use the hash parameters. On the other hand, hash parameters are not sent to the server. In that case, you will have to set the query parameters. I would suggest, either using hash or normal query parameters, but not both together.
@@ -92,6 +96,8 @@ const hasLocation = _url.has("location"); // true or false
 const checkParams = _url.has(["name", "location"]); // { name: false, location: true }
 ```
 
+Use the `hasHash()` method to check parameters in location hash string.
+
 ### `_url.remove()`
 
 The `_url.remove()` method will remove the specified param from the URL.
@@ -102,12 +108,12 @@ _url.remove("location");
 _url.remove(["location", "cars"]);
 ```
 
-Pass true as last argument to remove from param from hash parameters
+Use the `removeHash()` to remove from param from location hash string.
 
 ```js
-_url.remove("location", true);
+_url.removeHash("location");
 
-_url.remove(["location", "cars"], true);
+_url.removeHash(["location", "cars"]);
 ```
 
 If you have array based parameters, you can also remove a param with specific value.
@@ -117,17 +123,17 @@ For example, `cars%5B%5D=Volvo&cars%5B%5D=Saab&cars%5B%5D=Mercedes` for this que
 ```js
 _url.remove("cars", "Saab");
 
-_url.remove("cars", "Saab", true); // for hash parameter
+_url.removeHash("cars", "Saab"); // for hash parameter
 ```
 
 ### `_url.clear()`
 
-The `clear` method will remove all query parameters from the URL. Passing true to the method will remove the hash string parameters.
+The `clear` method will remove all query parameters from the URL.
 
 ```js
 _url.clear(); // will remove from location.search
 
-_url.clear(true); // will remove from location.hash
+_url.clearHash(); // will remove from location.hash
 ```
 
 ## Motivation

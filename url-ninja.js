@@ -3,10 +3,15 @@ window._url = (function(window) {
     return key.slice("-2") === "[]";
   }
 
-  function parseUrl(params) {
+  function getHashString() {
+    const h = window.location.hash;
+    const hashIndex = h.indexOf("?");
+    const hash = hashIndex > -1 ? h.slice(hashIndex) : "";
+    return hash;
+  }
+
+  function parseUrl(params, l) {
     const paramsMap = {};
-    let l = window.location.search;
-    let h = window.location.hash;
 
     function paramsMapAssign(key, value) {
       const isKeyArray = checkIfKeyIsArray(key);
@@ -15,7 +20,7 @@ window._url = (function(window) {
         if (value.split(",").length > 1) value = value.split(",");
         paramsMap[key] = value;
       } else {
-        key = key.slice(0, key.length - 2);
+        key = key.slice(0, key.length - 2); // toggle
 
         if (
           typeof paramsMap[key] !== undefined &&
@@ -28,11 +33,7 @@ window._url = (function(window) {
       }
     }
 
-    if (l.length > 0 || h.length > 0) {
-      const hashIndex = h.indexOf("?");
-      const hashPartials = hashIndex > -1 ? h.slice(hashIndex + 1) : "";
-      if (hashPartials.length > 0) l += "&" + hashPartials;
-
+    if (l.length > 0) {
       const partials = l.slice(1).split("&");
 
       partialsLoop: for (let j = 0; j < partials.length; j++) {
@@ -55,30 +56,34 @@ window._url = (function(window) {
     return paramsMap;
   }
 
-  function getParams(params) {
+  function _getParams(params, l) {
     if (typeof params === "string") {
       let _params = params;
 
       if (checkIfKeyIsArray(params))
         _params = params.slice(0, params.length - 2);
-      return parseUrl([params])[_params] || false;
+      return parseUrl([params], l)[_params] || false;
     }
 
     if (Object.prototype.toString.call(params) === "[object Array]")
-      return parseUrl(params);
+      return parseUrl(params, l);
 
-    return parseUrl();
+    return parseUrl(undefined, l);
   }
 
-  function setParams(key, value = false, isHash = false) {
-    let l = window.location.search;
-    let h = window.location.hash;
+  function getParams(params) {
+    return _getParams(params, window.location.search);
+  }
+
+  function getHashParams(params) {
+    const hash = getHashString();
+    return _getParams(params, hash);
+  }
+
+  function _setParams(key, value, l) {
     let partials = l.slice(1).split("&");
-    const hashIndex = h.indexOf("?");
-    if ((isHash || (value && !isHash)) && hashIndex > -1)
-      partials = (hashIndex > -1 ? h.slice(hashIndex + 1) : "").split("&");
     if (partials[0] === "") partials.shift();
-    function insertParam(key, value, isHash = false) {
+    function insertParam(key, value) {
       key = encodeURI(key);
       value =
         Object.prototype.toString.call(value) === "[object Array]"
@@ -112,16 +117,23 @@ window._url = (function(window) {
     if (Object.prototype.toString.call(key) === "[object Object]") {
       for (let i = 0; i < Object.keys(key).length; i++) {
         insertParam(Object.keys(key)[i], key[Object.keys(key)[i]], value);
-        if (value) isHash = true;
       }
     }
 
     const partialsString = partials.join("&");
-    if (isHash) {
-      const _r = partialsString > window.location.hash;
-      window.location.hash = "?" + partialsString;
-      return _r;
-    } else window.location.search = partialsString;
+    return partialsString;
+  }
+
+  function setParams(key, value = false) {
+    const partialsString = _setParams(key, value, window.location.search);
+    window.location.search = partialsString;
+    return true;
+  }
+
+  function setHashParams(key, value = false) {
+    const hash = getHashString();
+    const partialsString = _setParams(key, value, hash);
+    window.location.hash = "?" + partialsString;
     return true;
   }
 
@@ -139,17 +151,23 @@ window._url = (function(window) {
     return false;
   }
 
-  function removeParams(params, value = false, isHash = false) {
-    if (typeof value === "boolean") isHash = value;
+  function hasHashParams(params) {
+    if (typeof params === "string") return !!getHashParams(params);
 
-    let l = window.location.search;
-    let h = window.location.hash;
+    if (Object.prototype.toString.call(params) === "[object Array]") {
+      const map = {};
+      for (let i = 0; i < params.length; i++) {
+        map[params[i]] = !!getHashParams(params[i]);
+      }
+      return map;
+    }
+
+    return false;
+  }
+
+  function _removeParams(params, value, l) {
     let partials = l.slice(1).split("&");
 
-    const hashIndex = h.indexOf("?");
-    if (isHash && hashIndex > -1) {
-      partials = h.slice(hashIndex + 1).split("&");
-    }
     function deleteParam(key, value) {
       for (let i = 0; i < partials.length; i++) {
         const p = partials[i].split("=");
@@ -181,26 +199,40 @@ window._url = (function(window) {
     }
 
     const partialsString = partials.join("&");
-    if (isHash) {
-      const _r = partialsString > window.location.hash;
-      window.location.hash = "?" + partialsString;
-      return _r;
-    }
-    window.location.search = partialsString;
+    return partialsString;
+  }
 
+  function removeParams(params, value) {
+    let partialsString = _removeParams(params, value, window.location.search);
+    window.location.search = partialsString;
     return true;
   }
 
-  function clearParams(isHash = false) {
-    if (isHash) window.location.hash = "";
-    else window.location.search = "";
+  function removeHashParams(params, value) {
+    const hash = getHashString();
+    let partialsString = _removeParams(params, value, hash);
+    window.location.hash = "?" + partialsString;
+    return true;
+  }
+
+  function clearParams() {
+    window.location.search = "";
+  }
+
+  function clearHashParams() {
+    window.location.hash = "";
   }
 
   return {
     get: getParams,
+    getHash: getHashParams,
     set: setParams,
+    setHash: setHashParams,
     has: hasParams,
+    hasHash: hasHashParams,
     remove: removeParams,
-    clear: clearParams
+    removeHash: removeHashParams,
+    clear: clearParams,
+    clearHash: clearHashParams
   };
 })(window);
