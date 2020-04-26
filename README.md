@@ -54,7 +54,7 @@ const cars = _url.get("cars"); // [Volvo, Saab, Mercedes]
 
 Use the `getHash()` method, if you want to get paramaters from location hash.
 
-<b>Note</b> that location hash string must have a "?" before the start of parameters, just like in regular query strings.
+**Note** that location hash string must have a "?" before the start of parameters, just like in regular query strings.
 
 ### `_url.set()`
 
